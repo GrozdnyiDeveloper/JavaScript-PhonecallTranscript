@@ -1,0 +1,491 @@
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: "Segoe UI";
+            margin-block: 5px;
+            overflow: hidden;
+            width: 100%;
+            height: 100vh;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        button {
+            margin-inline: 3px;
+            border: 1px solid #00000003;
+            border-radius: 3px;
+            font-weight: 400;
+            box-shadow: 0px 0px 1px 0px #00000070;
+            background-color: #ffffff;
+            height: 25px;
+            min-width: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        .inner-container {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .header {
+            height: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px;
+            margin-bottom: 20px;
+        }
+
+        .buttons-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .call-summary-box {
+            margin: 5px;
+            background: #0078D40F;
+            color: #0078D4;
+            box-shadow: 0px 0px 3px 0px #0078D447;
+            border-radius: 10px;
+            font-family: "Segoe UI";
+            font-weight: 600;
+            font-size: 15px;
+            line-height: 150%;
+            padding: 20px;
+            height: fit-content;
+            overflow: auto;
+        }
+
+        .call-transcription-box {
+            margin: 5px;
+            background: #F5F5F5;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            overflow: auto;
+            padding: 20px 10px 10px 15px;
+            height: 85vh;
+            overflow: auto;
+            box-sizing: border-box;
+        }
+
+        #call-transcription-text-box {
+            font-family: "Segoe UI";
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 125%;
+            white-space: pre-line;
+        }
+
+        /* Настройки отображения сообщений */
+
+        .message {
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .message > div {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .message > .message-client {
+            flex-direction: row-reverse;
+        }
+
+        .message-user {
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            line-height: 50px;
+            text-align: center;
+            font-family: "Segoe UI";
+            font-weight: 600;
+            font-size: 22px;
+            flex-shrink: 0;
+            margin-inline: 5px;
+        }
+
+        .message-box {
+            width: 300px;
+            box-shadow: 2px 2px 8px 0px #00000021;
+            border-radius: 10px;
+            margin-inline: 5px;
+            padding: 15px;
+            font-family: "Segoe UI";
+        }
+
+        .message-box > p {
+            margin-bottom: 10px;
+        }
+
+        .message-name {
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .message-text {
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        /* Настройки отображения для сообщения Оператора */
+
+        .message-operator .message-user {
+            background: #0078D4;
+            color: #FFFFFF;
+        }
+
+        .message-operator .message-box {
+            background: #F0F0F0;
+        }
+
+        .message-operator .message-name {
+            color: #0078D4;
+        }
+
+        .message-operator .message-text {
+            color: #000000;
+        }
+
+        /* Настройки отображения для сообщения Менеджера */
+
+        .message-manager .message-user {
+            background: #0078D4;
+            color: #FFFFFF;
+        }
+
+        .message-manager .message-box {
+            background: #FFFFFF;
+        }
+
+        .message-manager .message-name {
+            color: #0078D4;
+        }
+
+        .message-manager .message-text {
+            color: #000000;
+        }
+
+        /* Настройки отображения для сообщения Клиента */
+
+        .message-client .message-user {
+            background: #FFFFFF;
+            color: #0078D4;
+        }
+
+        .message-client .message-box {
+            background: #0078D4;
+        }
+
+        .message-client .message-name {
+            color: #FFFFFF;
+        }
+
+        .message-client .message-text {
+            color: #FFFFFF;
+        }
+
+        /* Настройки отображения для сообщения Неопределённого пользователя */
+
+        .message-undefined .message-user {
+            background: #CBCBCB;
+            color: #FFFFFF;
+        }
+
+        .message-undefined .message-box {
+            background: #CBCBCB;
+        }
+
+        .message-undefined .message-name {
+            color: #000000;
+        }
+
+        .message-undefined .message-text {
+            color: #000000;
+        }
+
+        /* Настройки отображения для модального окна и фона */
+
+        .modal {
+            /*display: none;*/
+            position: fixed; 
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 40vh auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px; 
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-weight: 400;
+            font-size: 14px;
+        }
+    </style>
+
+    <script>
+        if (typeof (Project) == "undefined") {
+            Project = {};
+        }
+
+        Project.CallTranscription = {
+            // Контекст окна родительской формы
+            parentFormContext: null,
+            // Шаблон сообщения для диалога
+            messageTemplate: `<div class="message">
+                    <div class="{messageClass}">
+                        <div class="message-user">{userAbbreviation}</div>
+                        <div class="message-box">
+                            <p class="message-name">{userName}</p>
+                            <div class="message-text">{messageText}</div>
+                        </div>
+                    </div>
+                </div>`,
+
+            modalWindowTemplate: `Не удалось отобразить текст транскрипции, {fields} не содержит данных. `,
+
+            // Функция получения контекста формы и всех её данных
+            setClientApiContext: function (receivedContext) {
+                // Проверяем наличие контекста с формы
+                if (receivedContext) {
+                    // Для UCI: получаем контекст, переданный с формы
+                    Project.CallTranscription.parentFormContext = receivedContext;
+                } else {
+                    // Для Legacy: получаем контекст из контейнера окна
+                    Project.CallTranscription.parentFormContext = window.top.formContext;
+                    window.top.formContext = null;
+                }
+
+                // Вызов метода заполнения страницы данными
+                Project.CallTranscription._loadTranscriptionsInfo();
+            },
+
+            // Функция загрузки информации по транскрипциям в веб-ресурсе
+            _loadTranscriptionsInfo: function () {
+                var formContext = Project.CallTranscription.parentFormContext;
+
+                // Если контекст был получен
+                if (formContext) {
+                    var fieldsForModal = []; 
+                    // Запись данных из полей "Тема" в соответствующее место в элементе
+                    document.getElementById("call-transcription-header-name").innerText = formContext.getAttribute("subject")?.getValue();
+                    
+                    // Получаем значение поля "(служебное) Ссылка на запись звонка Comagic"
+                    var comagicRecordLink = formContext.getAttribute("crmpark_comagic_record_link")?.getValue();
+                    if (!comagicRecordLink) {
+                        // Если ссылка не содержит данные, то скрываем кнопку
+                        document.getElementById("call-summary-btn").setAttribute("style", "display: none;");
+                    }
+
+                    // Получаем значение поля "Итоги звонка"
+                    var summaryText = formContext.getAttribute("crmpark_summary")?.getValue();
+                    // Если итоги звонка имеют данные
+                    if (summaryText) {
+                        // Записывем "Итоги звонка" в текст
+                        document.getElementById("call-summary-text-box").innerText = formContext.getAttribute("crmpark_summary")?.getValue();
+                    }
+
+                    // Получаем значение поля "Транскрипт звонка"
+                    var transcriptionText = formContext.getAttribute("crmpark_transcription")?.getValue();
+                    // Если транскрипт имеет данные
+                    if (transcriptionText) {
+                        // Записываем "Транскрипт звонка" в текст
+                        document.getElementById("call-transcription-text-box").innerText = transcriptionText; 
+                        
+                        // Разделяем текст транскрипта согласно шаблону
+                        var regex = /\*\*(.+?)\*\*\s*(.*?)(?=\*\*|$)/gs;
+                        while ((match = regex.exec(transcriptionText)) !== null) {
+                            // Выделяем из строки имя пользователя и текст сообщения
+                            var userName = match[1].trim();
+                            var messageText = match[2].replace("\n\n", "\n").trim();
+
+                            // Вызываем функцию на получения параметров сообщения в зависимости от его отправителя
+                            var messageType = Project.CallTranscription._getMessageType(userName); 
+                            // На основе всех полученных данных вызываем функцию добавления сообщения в диалог
+                            Project.CallTranscription._addToDialogBox(messageType, messageText); 
+                        }
+                    } else {
+                        // Иначе сохраняем пустое поле
+                        fieldsForModal.push("\"Транскрипт звонка\"");
+                    }
+
+                    // Если имеются пустые/неполученные поля
+                    if (fieldsForModal.length > 0) {
+                        // Формируем данные для формирования сообщения
+                        var margin = fieldsForModal.length == 1 ? "поле " : "поля ";
+                        var fieldNames = fieldsForModal.join(', '); 
+                        // Показываем окно по середине веб ресурса и пишем в него сформированное сообщение
+                        document.getElementById("modal-error-window").removeAttribute("style");
+                        document.getElementById("modal-message-text").innerText = Project.CallTranscription.modalWindowTemplate.replace("{fields}", margin + fieldNames);
+                    } else {
+                        // Иначе прячем окно 
+                        document.getElementById("modal-error-window").setAttribute("style", "display: none;");
+                    }
+                } else {
+                    // Показываем окно по середине веб ресурса и пишем в него сообщение о том, что не удалось получить данные записи
+                    document.getElementById("modal-error-window").removeAttribute("style");
+                    document.getElementById("modal-message-text").innerText = "Не удалось получить контекст данных записи.  Пожалуйста, обратитесь к системному администратору.";
+                }
+            },
+
+            // Функция получения параметров сообщения в зависимости от его отправителя
+            _getMessageType: function (userName) {
+                if (userName.includes("Оператор")) {
+                    // Параметры для сообщения в случаи, если отправителем является Оператором
+                    return {
+                        messageClass: "message-operator",
+                        userName: "Оператор", 
+                        userAbbreviation: "КЦ"
+                    }
+                } else if (userName.includes("Клиент")) {
+                    // Параметры для сообщения в случаи, если отправителем является Клиент
+                    return {
+                        messageClass: "message-client",
+                        userName: "Клиент", 
+                        userAbbreviation: "К"
+                    }
+                } else if (userName.includes("Менеджер")) {
+                    // Параметры для сообщения в случаи, если отправителем является Менеджер
+                    return {
+                        messageClass: "message-manager",
+                        userName: "Менеджер", 
+                        userAbbreviation: "М"
+                    }
+                } else {
+                    // Параметры для сообщения в случаи, если отправитель не был определён
+                    return {
+                        messageClass: "message-undefined",
+                        userName: "Неопределённый (" + userName + ")", 
+                        userAbbreviation: "Н"
+                    }
+                }
+            },
+
+            // Функция форирования и добавления сообщения в диалог
+            _addToDialogBox: function (messageType, messageText) {
+                var formatedMessage = ""; 
+
+                // Форматируем текст для сохранением переносов 
+                messageText.split("\n").forEach(line => {
+                    formatedMessage += "<p>" + line  + "</p>"; 
+                });
+
+                // Формируем сообщение по шаблону с подстановкой в него ранее определённых данных
+                var message = Project.CallTranscription.messageTemplate
+                    .replace("{messageClass}", messageType.messageClass)
+                    .replace("{userName}", messageType.userName)
+                    .replace("{userAbbreviation}", messageType.userAbbreviation)
+                    .replace("{messageText}", formatedMessage);
+
+                // Добавление сообщения в диалог
+                document.getElementById("call-transcription-dialog-box").insertAdjacentHTML('beforeend', message);
+            },
+
+            // Функция обработки нажатия кнопки "Диалог"
+            changeCallTranscriptionToDialog: function () {
+                // Переключаем видимость у окон (прячем текст, показываем диалог)
+                document.getElementById("call-transcription-text-box").setAttribute("style", "display: none;");
+                document.getElementById("call-transcription-dialog-box").removeAttribute("style");
+                // Переключаем обводку кнопок (добавляем для кнопки "Диалог" и убираем для кнопки "Текст")
+                document.getElementById("call-transcription-dialog-btn").setAttribute("style", "border: 2px solid #0078D4");
+                document.getElementById("call-transcription-text-btn").removeAttribute("style");
+                // Переключаем доступность кнопок (активируем кнопку "Диалог" и деактивируем кнопку "Текст")
+                document.getElementById("call-transcription-dialog-btn").setAttribute("disabled", "true");
+                document.getElementById("call-transcription-text-btn").removeAttribute("disabled");
+            },
+
+            // Функция обработки нажатия кнопки "Текст"
+            changeCallTranscriptionToText: function () {
+                // Переключаем видимость у окон (прячем диалог, показываем текст)
+                document.getElementById("call-transcription-dialog-box").setAttribute("style", "display: none;");
+                document.getElementById("call-transcription-text-box").removeAttribute("style");
+                // Переключаем обводку кнопок (добавляем для кнопки "Текст" и убираем для кнопки "Диалог")
+                document.getElementById("call-transcription-text-btn").setAttribute("style", "border: 2px solid #0078D4");
+                document.getElementById("call-transcription-dialog-btn").removeAttribute("style");
+                // Переключаем доступность кнопок (активируем кнопку "Текст" и деактивируем кнопку "Диалог")
+                document.getElementById("call-transcription-text-btn").setAttribute("disabled", "true");
+                document.getElementById("call-transcription-dialog-btn").removeAttribute("disabled");
+            },
+
+            // Функция открытия ссылки на запись разговора
+            listenComagicCall: function () {
+                var formContext = Project.CallTranscription.parentFormContext;
+
+                // Получаем ссылку на запись разговора из поля "(служебное) Ссылка на запись звонка Comagic"
+                var comagicCallLink = formContext.getAttribute("crmpark_comagic_record_link")?.getValue();
+                if (typeof comagicCallLink != 'undefined' && comagicCallLink != null && comagicCallLink.length > 1) {
+                    // Если ссылка имееется, то открываем её в новом окне/вкладке
+                    window.open(comagicCallLink);
+                }
+                else {
+                    // Иначе выводим уведомление об отсуствии записи для данной записи
+                    var alertStrings = { confirmButtonLabel: "ОК", text: "Для данного звонка нет записи", title: "Ошибка!" };
+                    var alertOptions = { height: 260, width: 400 };
+                    Xrm.Navigation.openAlertDialog(alertStrings, alertOptions).then(
+                        function (success) {
+                            console.log("Alert dialog closed");
+                        },
+                        function (error) {
+                            console.log(error.message);
+                        }
+                    );
+                }
+            },
+        }
+    </script>
+    <meta>
+</head>
+<body>
+    <div class="main-container">
+        <div class="inner-container">
+            <div class="header">
+                <p id="call-transcription-header-name">Содержание звонка</p>
+                <div class="buttons-group">
+                    <button class="call-transcription-button" id="call-transcription-dialog-btn" onclick="Project.CallTranscription.changeCallTranscriptionToDialog()">Диалог</button>
+                    <button class="call-transcription-button" id="call-transcription-text-btn" onclick="Project.CallTranscription.changeCallTranscriptionToText()" style="border: 2px solid #0078D4" disabled="true">Текст</button>
+                </div>
+            </div>
+            <div class="call-transcription-box" style="display: none;" id="call-transcription-dialog-box"></div>
+            <div class="call-transcription-box" id="call-transcription-text-box"></div>
+        </div>
+        <div class="inner-container" id="call-summary-container">
+            <div class="header">
+                <p>Краткое содержание разговора</p>
+                <div class="buttons-group">
+                    <button id="call-summary-btn" onclick="Project.CallTranscription.listenComagicCall()"><img height="14px" src="../images/headphones.png" />Прослушать запись</button>
+                </div>
+            </div>
+            <div class="call-summary-box" id="call-summary-text-box"></div>
+        </div>
+        <div id="modal-error-window" class="modal" style="display: none;">
+            <div class="modal-content">
+                <p id="modal-message-text"></p>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../../ClientGlobalContext.js.aspx"></script>
+</body>
+</html>
